@@ -23,6 +23,18 @@ const apiKey = useLocalStorage('ai-content-security-v2ex-apiKey', '')
 const modelId = useLocalStorage('ai-content-security-v2ex-modelId', '')
 const token = useLocalStorage('ai-content-security-v2ex-token', '')
 
+const totalPromptTokens = useLocalStorage('ai-content-security-v2ex-totalPromptTokens', 0)
+const totalPromptCacheHitTokens = useLocalStorage('ai-content-security-v2ex-totalPromptCacheHitTokens', 0)
+const totalPromptCacheMissTokens = useLocalStorage('ai-content-security-v2ex-totalPromptCacheMissTokens', 0)
+
+const isDeepseekAPI = computed(() => totalPromptCacheHitTokens.value > 0)
+
+function clearStats() {
+  totalPromptTokens.value = 0
+  totalPromptCacheHitTokens.value = 0
+  totalPromptCacheMissTokens.value = 0
+}
+
 onMounted(async () => {
   systemMessage.value = await $client.aiContentSecurity.openai.getSystemMessage.query()
   const urlTopicId = route.query.topic as string
@@ -129,13 +141,18 @@ async function reviewContent(content: { content: string, reviewing?: boolean, sc
 
   content.reviewing = true
   try {
-    const score = await $client.aiContentSecurity.openai.aiContentReview.mutate({
+    const result = await $client.aiContentSecurity.openai.aiContentReview.mutate({
       baseURL: baseURL.value,
       apiKey: apiKey.value,
       modelId: modelId.value,
       content: content.content
     })
-    content.score = score
+    content.score = result.score
+    totalPromptTokens.value += result.usage.prompt_tokens
+    if (result.usage.prompt_cache_hit_tokens !== undefined) {
+      totalPromptCacheHitTokens.value += result.usage.prompt_cache_hit_tokens
+      totalPromptCacheMissTokens.value += result.usage.prompt_tokens - result.usage.prompt_cache_hit_tokens
+    }
   }
   catch (error: unknown) {
     if (error instanceof Error) {
@@ -187,6 +204,17 @@ function getScoreText(score: number): string {
 <template>
   <NSpace vertical size="large" class="container">
     <NH1>V2EX 主题内容审核</NH1>
+    <NSpace>
+      <NStatistic label="总 Token 数" :value="totalPromptTokens" />
+      <NStatistic label="总 Token 金额" :value="`${(totalPromptTokens / 1000000).toFixed(6)} 元`" />
+      <NStatistic v-if="isDeepseekAPI" label="总缓存 Token 数" :value="totalPromptCacheHitTokens" />
+      <NStatistic v-if="isDeepseekAPI" label="总缓存 Token 金额" :value="`${(totalPromptCacheHitTokens / 10000000).toFixed(6)} 元`" />
+      <NStatistic v-if="isDeepseekAPI" label="总无缓存 Token 数" :value="totalPromptCacheMissTokens" />
+      <NStatistic v-if="isDeepseekAPI" label="总无缓存 Token 金额" :value="`${(totalPromptCacheMissTokens / 1000000).toFixed(6)} 元`" />
+      <NButton @click="clearStats">
+        清除统计
+      </NButton>
+    </NSpace>
     <NButton @click="router.push('/ai-content-security-v2ex/config')">
       前往设置
     </NButton>

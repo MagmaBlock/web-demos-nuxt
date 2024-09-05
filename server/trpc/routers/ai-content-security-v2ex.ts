@@ -167,7 +167,10 @@ export const aiContentSecurityRouter = router({
             throw new Error('AI返回的分数无效')
           }
 
-          return score
+          return {
+            score,
+            usage: response.data.usage
+          }
         }
         catch (error) {
           console.error('AI审核评论内容时出错:', error)
