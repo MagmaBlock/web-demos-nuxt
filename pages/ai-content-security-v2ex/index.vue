@@ -1,18 +1,17 @@
 <script lang="ts" setup>
-import { onMounted, ref, watch } from 'vue'
-import { useRouter } from 'vue-router'
 import { useLocalStorage } from '@vueuse/core'
-import { useMessage } from 'naive-ui'
 
 const { $client } = useNuxtApp()
 
 const router = useRouter()
+const route = useRoute()
 const message = useMessage()
 
 const topicId = ref('')
 const topicContent = ref<{ content: string, reviewing?: boolean, score?: number }>({ content: '' })
 const replies = ref<Array<{ content: string, reviewing?: boolean, score?: number }>>([])
 const loading = ref(false)
+const loadingMoreReplies = ref(false)
 const reviewingAll = ref(false)
 const systemMessage = ref('')
 const currentPage = ref(1)
@@ -26,13 +25,19 @@ const token = useLocalStorage('ai-content-security-v2ex-token', '')
 
 onMounted(async () => {
   systemMessage.value = await $client.aiContentSecurity.openai.getSystemMessage.query()
+  const urlTopicId = route.query.topic as string
+  if (urlTopicId) {
+    topicId.value = urlTopicId
+    await fetchTopic()
+  }
 })
 
-watch(topicId, () => {
+watch(topicId, (newValue) => {
   currentPage.value = 1
   replies.value = []
   hasMoreReplies.value = true
   lastPageContent.value = ''
+  router.push({ query: { ...route.query, topic: newValue } })
 })
 
 async function fetchTopic(): Promise<void> {
@@ -51,7 +56,10 @@ async function fetchTopic(): Promise<void> {
     replies.value = []
     hasMoreReplies.value = true
     lastPageContent.value = ''
-    await fetchReplies()
+    for (let i = 0; i < 5; i++) {
+      if (!hasMoreReplies.value) { break }
+      await fetchReplies()
+    }
   }
   catch (error: unknown) {
     if (error instanceof Error) {
@@ -104,7 +112,13 @@ async function fetchReplies(): Promise<void> {
 }
 
 async function loadMoreReplies(): Promise<void> {
-  await fetchReplies()
+  loadingMoreReplies.value = true
+  try {
+    await fetchReplies()
+  }
+  finally {
+    loadingMoreReplies.value = false
+  }
 }
 
 async function reviewContent(content: { content: string, reviewing?: boolean, score?: number }): Promise<void> {
@@ -220,7 +234,7 @@ function getScoreText(score: number): string {
           </NText>
         </NListItem>
       </NList>
-      <NButton v-if="hasMoreReplies" @click="loadMoreReplies">
+      <NButton v-if="hasMoreReplies" :loading="loadingMoreReplies" @click="loadMoreReplies">
         加载更多
       </NButton>
     </NSpace>
