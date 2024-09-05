@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useLocalStorage } from '@vueuse/core'
 import { useMessage } from 'naive-ui'
@@ -78,73 +78,62 @@ async function reviewReply(reply: { content: string, reviewing?: boolean, score?
   }
 }
 
-function observeReplies(): void {
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        const target = entry.target as HTMLElement
-        const index = Number(target.dataset.index)
-        if (!Number.isNaN(index) && !replies.value[index].score && !replies.value[index].reviewing) {
-          reviewReply(replies.value[index], index)
-        }
-      }
-    })
-  }, { threshold: 0.5 })
-
-  document.querySelectorAll('.reply-item').forEach(el => observer.observe(el))
+function getScoreType(score: number): 'success' | 'warning' | 'error' {
+  if (score >= 75) { return 'error' }
+  if (score >= 50) { return 'warning' }
+  return 'success'
 }
 
-onMounted(() => {
-  if (!token.value) {
-    message.warning('请先前往设置页面配置 V2EX Token')
-  }
-  observeReplies()
-})
+function getScoreText(score: number): string {
+  if (score >= 75) { return '封禁' }
+  if (score >= 50) { return '风险' }
+  return '正常'
+}
 </script>
 
 <template>
-  <NFlex vertical class="container mx-auto my-8" :wrap="false">
-    <h1 class="text-2xl font-bold">
-      V2EX 主题内容审核
-    </h1>
-    <NButton @click="router.push('/ai-content-security-v2ex/config')">
-      前往设置
-    </NButton>
-    <NFlex align="center" :wrap="false">
-      <NInput v-model:value="topicId" placeholder="请输入 V2EX 主题 ID" />
-      <NButton type="primary" :loading="loading" @click="fetchTopic">
-        获取主题内容
+  <NCard class="container">
+    <NSpace vertical size="large">
+      <NH1>V2EX 主题内容审核</NH1>
+      <NButton @click="router.push('/ai-content-security-v2ex/config')">
+        前往设置
       </NButton>
-    </NFlex>
-    <div v-if="topicContent" class="bg-gray-100 rounded">
-      <h2 class="text-xl font-bold">
-        主题内容：
-      </h2>
-      <p>{{ topicContent }}</p>
-    </div>
-    <div v-if="replies.length">
-      <h2 class="text-xl font-bold">
-        评论：
-      </h2>
-      <NFlex vertical :wrap="false">
-        <div v-for="(reply, index) in replies" :key="index" class="reply-item bg-gray-100 rounded" :data-index="index">
-          <NFlex justify="space-between" align="start" :wrap="false">
-            <p>{{ reply.content }}</p>
-            <div>
-              <NSpin v-if="reply.reviewing" size="small" />
-              <NTag v-else-if="reply.score !== undefined" :type="reply.score >= 75 ? 'error' : reply.score >= 50 ? 'warning' : 'success'">
-                {{ reply.score >= 75 ? '封禁' : reply.score >= 50 ? '风险' : '正常' }} ({{ reply.score }})
-              </NTag>
-            </div>
-          </NFlex>
-        </div>
-      </NFlex>
-    </div>
-  </NFlex>
+      <NSpace>
+        <NInput v-model:value="topicId" placeholder="请输入 V2EX 主题 ID" />
+        <NButton type="primary" :loading="loading" @click="fetchTopic">
+          获取主题内容
+        </NButton>
+      </NSpace>
+      <NCard v-if="topicContent" title="主题内容" embedded>
+        <NText>{{ topicContent }}</NText>
+      </NCard>
+      <NCard v-if="replies.length" title="评论" embedded>
+        <NList>
+          <NListItem v-for="(reply, index) in replies" :key="index">
+            <NSpace justify="space-between" align="start">
+              <NText style="white-space: pre-wrap;">
+                {{ reply.content }}
+              </NText>
+              <NSpace>
+                <NButton v-if="!reply.reviewing && reply.score === undefined" @click="reviewReply(reply, index)">
+                  审核
+                </NButton>
+                <NSpin v-if="reply.reviewing" size="small" />
+                <NTag v-else-if="reply.score !== undefined" :type="getScoreType(reply.score)">
+                  {{ getScoreText(reply.score) }} ({{ reply.score }})
+                </NTag>
+              </NSpace>
+            </NSpace>
+          </NListItem>
+        </NList>
+      </NCard>
+    </NSpace>
+  </NCard>
 </template>
 
 <style scoped>
 .container {
   max-width: 800px;
+  margin: 20px auto;
 }
 </style>
