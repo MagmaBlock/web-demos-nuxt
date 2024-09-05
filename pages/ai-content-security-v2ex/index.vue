@@ -33,10 +33,10 @@ async function fetchTopic(): Promise<void> {
 
   loading.value = true
   try {
-    topicContent.value.content = await $client.aiContentSecurity.v2ex.getTopicContent.query({
+    topicContent.value = { content: await $client.aiContentSecurity.v2ex.getTopicContent.query({
       topicId: Number(topicId.value),
       token: token.value
-    })
+    }) }
     replies.value = (await $client.aiContentSecurity.v2ex.getTopicReplyContents.query({
       topicId: Number(topicId.value),
       token: token.value
