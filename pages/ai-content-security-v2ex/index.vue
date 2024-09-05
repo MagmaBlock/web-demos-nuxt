@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useLocalStorage } from '@vueuse/core'
 import { useMessage } from 'naive-ui'
@@ -14,11 +14,16 @@ const topicContent = ref<{ content: string, reviewing?: boolean, score?: number 
 const replies = ref<Array<{ content: string, reviewing?: boolean, score?: number }>>([])
 const loading = ref(false)
 const reviewingAll = ref(false)
+const systemMessage = ref('')
 
 const baseURL = useLocalStorage('ai-content-security-v2ex-baseURL', '')
 const apiKey = useLocalStorage('ai-content-security-v2ex-apiKey', '')
 const modelId = useLocalStorage('ai-content-security-v2ex-modelId', '')
 const token = useLocalStorage('ai-content-security-v2ex-token', '')
+
+onMounted(async () => {
+  systemMessage.value = await $client.aiContentSecurity.openai.getSystemMessage.query()
+})
 
 async function fetchTopic(): Promise<void> {
   if (!token.value) {
@@ -164,6 +169,11 @@ function getScoreText(score: number): string {
         </NListItem>
       </NList>
     </NSpace>
+    <NCard title="当前系统提示词">
+      <NText style="white-space: pre-wrap;">
+        {{ systemMessage }}
+      </NText>
+    </NCard>
   </NSpace>
 </template>
 
