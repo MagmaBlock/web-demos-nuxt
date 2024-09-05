@@ -24,6 +24,9 @@ function handleSubmit() {
 
 <template>
   <div class="max-w-2xl mx-auto mt-5">
+    <div class="my-8 text-zinc-700">
+      本界面的所有配置都只在浏览器端存储，不会上传到服务器。
+    </div>
     <NForm label-placement="left" label-width="auto" require-mark-placement="right-hanging" size="medium">
       <NFormItem label="OpenAI API baseURL" path="baseURL">
         <NInput v-model:value="baseURL" placeholder="请输入API基础URL" type="text" autocomplete="off" />
@@ -46,5 +49,26 @@ function handleSubmit() {
         </NButton>
       </NFlex>
     </NForm>
+    <NAlert title="V2EX Token 获取" type="info" class="mt-4">
+      <NP>
+        有了 Token 才能调用 V2EX 的 API。
+      </NP>
+      <NP>
+        获取 Token：
+        <NButton tag="a" href="https://v2ex.com/help/personal-access-token" target="_blank" secondary size="small">
+          点我
+        </NButton>
+      </NP>
+    </NAlert>
+    <NAlert title="推荐使用 DeepSeek，因为我炼的时候就是" type="info" class="mt-4">
+      <NP>baseURL: https://api.deepseek.com</NP>
+      <NP>model: deepseek-chat</NP>
+      <NP>
+        apikey:
+        <NButton tag="a" href="https://platform.deepseek.com/api_keys" target="_blank" secondary size="small">
+          点我
+        </NButton>
+      </NP>
+    </NAlert>
   </div>
 </template>
