@@ -15,6 +15,8 @@ const replies = ref<Array<{ content: string, reviewing?: boolean, score?: number
 const loading = ref(false)
 const reviewingAll = ref(false)
 const systemMessage = ref('')
+const currentPage = ref(1)
+const totalPages = ref(1)
 
 const baseURL = useLocalStorage('ai-content-security-v2ex-baseURL', '')
 const apiKey = useLocalStorage('ai-content-security-v2ex-apiKey', '')
@@ -37,10 +39,7 @@ async function fetchTopic(): Promise<void> {
       topicId: Number(topicId.value),
       token: token.value
     }) }
-    replies.value = (await $client.aiContentSecurity.v2ex.getTopicReplyContents.query({
-      topicId: Number(topicId.value),
-      token: token.value
-    })).map(content => ({ content }))
+    await fetchReplies()
   }
   catch (error: unknown) {
     if (error instanceof Error) {
@@ -53,6 +52,31 @@ async function fetchTopic(): Promise<void> {
   finally {
     loading.value = false
   }
+}
+
+async function fetchReplies(): Promise<void> {
+  try {
+    replies.value = (await $client.aiContentSecurity.v2ex.getTopicReplyContents.query({
+      topicId: Number(topicId.value),
+      token: token.value,
+      page: currentPage.value
+    })).map(content => ({ content }))
+    // 这里假设每页显示20条回复，可以根据实际情况调整
+    totalPages.value = Math.ceil(replies.value.length / 20)
+  }
+  catch (error: unknown) {
+    if (error instanceof Error) {
+      message.error(`获取回复内容失败：${error.message}`)
+    }
+    else {
+      message.error('获取回复内容失败')
+    }
+  }
+}
+
+async function changePage(page: number): Promise<void> {
+  currentPage.value = page
+  await fetchReplies()
 }
 
 async function reviewContent(content: { content: string, reviewing?: boolean, score?: number }): Promise<void> {
@@ -168,6 +192,11 @@ function getScoreText(score: number): string {
           </NText>
         </NListItem>
       </NList>
+      <NPagination
+        v-model:page="currentPage"
+        :page-count="totalPages"
+        @update:page="changePage"
+      />
     </NSpace>
     <NCard title="当前系统提示词">
       <NText style="white-space: pre-wrap;">
