@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useLocalStorage } from '@vueuse/core'
 import { useMessage } from 'naive-ui'
@@ -17,6 +17,7 @@ const reviewingAll = ref(false)
 const systemMessage = ref('')
 const currentPage = ref(1)
 const hasMoreReplies = ref(true)
+const lastPageContent = ref('')
 
 const baseURL = useLocalStorage('ai-content-security-v2ex-baseURL', '')
 const apiKey = useLocalStorage('ai-content-security-v2ex-apiKey', '')
@@ -25,6 +26,13 @@ const token = useLocalStorage('ai-content-security-v2ex-token', '')
 
 onMounted(async () => {
   systemMessage.value = await $client.aiContentSecurity.openai.getSystemMessage.query()
+})
+
+watch(topicId, () => {
+  currentPage.value = 1
+  replies.value = []
+  hasMoreReplies.value = true
+  lastPageContent.value = ''
 })
 
 async function fetchTopic(): Promise<void> {
@@ -42,6 +50,7 @@ async function fetchTopic(): Promise<void> {
     currentPage.value = 1
     replies.value = []
     hasMoreReplies.value = true
+    lastPageContent.value = ''
     await fetchReplies()
   }
   catch (error: unknown) {
@@ -67,12 +76,20 @@ async function fetchReplies(): Promise<void> {
       page: currentPage.value
     })).map(content => ({ content }))
 
+    const currentPageContent = newReplies.map(reply => reply.content).join('')
+
+    if (currentPageContent === lastPageContent.value) {
+      hasMoreReplies.value = false
+      return
+    }
+
     if (newReplies.length === 0) {
       hasMoreReplies.value = false
     }
     else {
       replies.value.push(...newReplies)
       currentPage.value++
+      lastPageContent.value = currentPageContent
     }
   }
   catch (error: unknown) {
