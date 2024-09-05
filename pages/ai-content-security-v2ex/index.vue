@@ -13,6 +13,7 @@ const topicId = ref('')
 const topicContent = ref<{ content: string, reviewing?: boolean, score?: number }>({ content: '' })
 const replies = ref<Array<{ content: string, reviewing?: boolean, score?: number }>>([])
 const loading = ref(false)
+const reviewingAll = ref(false)
 
 const baseURL = useLocalStorage('ai-content-security-v2ex-baseURL', '')
 const apiKey = useLocalStorage('ai-content-security-v2ex-apiKey', '')
@@ -78,6 +79,27 @@ async function reviewContent(content: { content: string, reviewing?: boolean, sc
   }
 }
 
+async function reviewAll(): Promise<void> {
+  if (!baseURL.value || !apiKey.value || !modelId.value) {
+    message.error('请先前往设置页面配置 OpenAI API')
+    return
+  }
+
+  reviewingAll.value = true
+  const allContents = [topicContent.value, ...replies.value]
+  const unreviewed = allContents.filter(content => content.score === undefined)
+
+  try {
+    for (let i = 0; i < unreviewed.length; i += 5) {
+      const batch = unreviewed.slice(i, i + 5)
+      await Promise.all(batch.map(content => reviewContent(content)))
+    }
+  }
+  finally {
+    reviewingAll.value = false
+  }
+}
+
 function getScoreType(score: number): 'success' | 'warning' | 'error' {
   if (score >= 75) { return 'error' }
   if (score >= 50) { return 'warning' }
@@ -120,6 +142,9 @@ function getScoreText(score: number): string {
     </NSpace>
     <NSpace v-if="replies.length" vertical>
       <NH3>评论</NH3>
+      <NButton :loading="reviewingAll" @click="reviewAll">
+        全部审核
+      </NButton>
       <NList>
         <NListItem v-for="(reply, index) in replies" :key="index">
           <template #suffix>
