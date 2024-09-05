@@ -16,7 +16,7 @@ const loading = ref(false)
 const reviewingAll = ref(false)
 const systemMessage = ref('')
 const currentPage = ref(1)
-const totalPages = ref(1)
+const hasMoreReplies = ref(true)
 
 const baseURL = useLocalStorage('ai-content-security-v2ex-baseURL', '')
 const apiKey = useLocalStorage('ai-content-security-v2ex-apiKey', '')
@@ -39,6 +39,9 @@ async function fetchTopic(): Promise<void> {
       topicId: Number(topicId.value),
       token: token.value
     }) }
+    currentPage.value = 1
+    replies.value = []
+    hasMoreReplies.value = true
     await fetchReplies()
   }
   catch (error: unknown) {
@@ -55,14 +58,22 @@ async function fetchTopic(): Promise<void> {
 }
 
 async function fetchReplies(): Promise<void> {
+  if (!hasMoreReplies.value) { return }
+
   try {
-    replies.value = (await $client.aiContentSecurity.v2ex.getTopicReplyContents.query({
+    const newReplies = (await $client.aiContentSecurity.v2ex.getTopicReplyContents.query({
       topicId: Number(topicId.value),
       token: token.value,
       page: currentPage.value
     })).map(content => ({ content }))
-    // 这里假设每页显示20条回复，可以根据实际情况调整
-    totalPages.value = Math.ceil(replies.value.length / 20)
+
+    if (newReplies.length === 0) {
+      hasMoreReplies.value = false
+    }
+    else {
+      replies.value.push(...newReplies)
+      currentPage.value++
+    }
   }
   catch (error: unknown) {
     if (error instanceof Error) {
@@ -71,11 +82,11 @@ async function fetchReplies(): Promise<void> {
     else {
       message.error('获取回复内容失败')
     }
+    hasMoreReplies.value = false
   }
 }
 
-async function changePage(page: number): Promise<void> {
-  currentPage.value = page
+async function loadMoreReplies(): Promise<void> {
   await fetchReplies()
 }
 
@@ -192,11 +203,9 @@ function getScoreText(score: number): string {
           </NText>
         </NListItem>
       </NList>
-      <NPagination
-        v-model:page="currentPage"
-        :page-count="totalPages"
-        @update:page="changePage"
-      />
+      <NButton v-if="hasMoreReplies" @click="loadMoreReplies">
+        加载更多
+      </NButton>
     </NSpace>
     <NCard title="当前系统提示词">
       <NText style="white-space: pre-wrap;">
