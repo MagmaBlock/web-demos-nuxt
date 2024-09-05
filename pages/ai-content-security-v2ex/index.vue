@@ -10,7 +10,7 @@ const router = useRouter()
 const message = useMessage()
 
 const topicId = ref('')
-const topicContent = ref('')
+const topicContent = ref<{ content: string, reviewing?: boolean, score?: number }>({ content: '' })
 const replies = ref<Array<{ content: string, reviewing?: boolean, score?: number }>>([])
 const loading = ref(false)
 
@@ -27,7 +27,7 @@ async function fetchTopic(): Promise<void> {
 
   loading.value = true
   try {
-    topicContent.value = await $client.aiContentSecurity.v2ex.getTopicContent.query({
+    topicContent.value.content = await $client.aiContentSecurity.v2ex.getTopicContent.query({
       topicId: Number(topicId.value),
       token: token.value
     })
@@ -49,21 +49,21 @@ async function fetchTopic(): Promise<void> {
   }
 }
 
-async function reviewReply(reply: { content: string, reviewing?: boolean, score?: number }, index: number): Promise<void> {
+async function reviewContent(content: { content: string, reviewing?: boolean, score?: number }): Promise<void> {
   if (!baseURL.value || !apiKey.value || !modelId.value) {
     message.error('请先前往设置页面配置 OpenAI API')
     return
   }
 
-  replies.value[index].reviewing = true
+  content.reviewing = true
   try {
     const score = await $client.aiContentSecurity.openai.aiContentReview.mutate({
       baseURL: baseURL.value,
       apiKey: apiKey.value,
       modelId: modelId.value,
-      content: reply.content
+      content: content.content
     })
-    replies.value[index].score = score
+    content.score = score
   }
   catch (error: unknown) {
     if (error instanceof Error) {
@@ -74,7 +74,7 @@ async function reviewReply(reply: { content: string, reviewing?: boolean, score?
     }
   }
   finally {
-    replies.value[index].reviewing = false
+    content.reviewing = false
   }
 }
 
@@ -92,43 +92,54 @@ function getScoreText(score: number): string {
 </script>
 
 <template>
-  <NCard class="container">
-    <NSpace vertical size="large">
-      <NH1>V2EX 主题内容审核</NH1>
-      <NButton @click="router.push('/ai-content-security-v2ex/config')">
-        前往设置
+  <NSpace vertical size="large" class="container">
+    <NH1>V2EX 主题内容审核</NH1>
+    <NButton @click="router.push('/ai-content-security-v2ex/config')">
+      前往设置
+    </NButton>
+    <NSpace>
+      <NInput v-model:value="topicId" placeholder="请输入 V2EX 主题 ID" />
+      <NButton type="primary" :loading="loading" @click="fetchTopic">
+        获取主题内容
       </NButton>
-      <NSpace>
-        <NInput v-model:value="topicId" placeholder="请输入 V2EX 主题 ID" />
-        <NButton type="primary" :loading="loading" @click="fetchTopic">
-          获取主题内容
-        </NButton>
-      </NSpace>
-      <NCard v-if="topicContent" title="主题内容" embedded>
-        <NText>{{ topicContent }}</NText>
-      </NCard>
-      <NCard v-if="replies.length" title="评论" embedded>
-        <NList>
-          <NListItem v-for="(reply, index) in replies" :key="index">
-            <NSpace justify="space-between" align="start">
-              <NText style="white-space: pre-wrap;">
-                {{ reply.content }}
-              </NText>
-              <NSpace>
-                <NButton v-if="!reply.reviewing && reply.score === undefined" @click="reviewReply(reply, index)">
-                  审核
-                </NButton>
-                <NSpin v-if="reply.reviewing" size="small" />
-                <NTag v-else-if="reply.score !== undefined" :type="getScoreType(reply.score)">
-                  {{ getScoreText(reply.score) }} ({{ reply.score }})
-                </NTag>
-              </NSpace>
-            </NSpace>
-          </NListItem>
-        </NList>
-      </NCard>
     </NSpace>
-  </NCard>
+    <NSpace v-if="topicContent.content" vertical>
+      <NH3>主题内容</NH3>
+      <NText style="white-space: pre-wrap;">
+        {{ topicContent.content }}
+      </NText>
+      <NSpace>
+        <NButton v-if="!topicContent.reviewing && topicContent.score === undefined" @click="reviewContent(topicContent)">
+          审核主题内容
+        </NButton>
+        <NSpin v-if="topicContent.reviewing" size="small" />
+        <NTag v-else-if="topicContent.score !== undefined" :type="getScoreType(topicContent.score)">
+          {{ getScoreText(topicContent.score) }} ({{ topicContent.score }})
+        </NTag>
+      </NSpace>
+    </NSpace>
+    <NSpace v-if="replies.length" vertical>
+      <NH3>评论</NH3>
+      <NList>
+        <NListItem v-for="(reply, index) in replies" :key="index">
+          <template #suffix>
+            <NSpace>
+              <NButton v-if="!reply.reviewing && reply.score === undefined" @click="reviewContent(reply)">
+                审核
+              </NButton>
+              <NSpin v-if="reply.reviewing" size="small" />
+              <NTag v-else-if="reply.score !== undefined" :type="getScoreType(reply.score)">
+                {{ getScoreText(reply.score) }} ({{ reply.score }})
+              </NTag>
+            </NSpace>
+          </template>
+          <NText style="white-space: pre-wrap;">
+            {{ reply.content }}
+          </NText>
+        </NListItem>
+      </NList>
+    </NSpace>
+  </NSpace>
 </template>
 
 <style scoped>
