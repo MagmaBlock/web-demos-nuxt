@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { publicProcedure, router } from '../trpc'
-import { aiContentSecurityRouter } from './ai-content-security-v2ex'
+import { aiContentSecurityRouter } from './ai-content-security'
 
 export const appRouter = router({
   hello: publicProcedure

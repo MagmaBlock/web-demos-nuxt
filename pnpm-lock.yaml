@@ -20,6 +20,9 @@ importers:
       axios:
         specifier: ^1.7.7
         version: 1.7.7
+      html-to-md:
+        specifier: ^0.8.6
+        version: 0.8.6
       nuxt:
         specifier: ^3.12.4
         version: 3.13.1(@parcel/watcher@2.4.1)(@types/node@20.16.5)(eslint@8.57.0)(ioredis@5.4.1)(magicast@0.3.5)(optionator@0.9.4)(rollup@4.21.2)(terser@5.31.6)(typescript@5.5.4)(vite@5.4.3(@types/node@20.16.5)(terser@5.31.6))(vue-tsc@2.1.6(typescript@5.5.4))
@@ -2627,6 +2630,9 @@ packages:
   html-tags@3.3.1:
     resolution: {integrity: sha512-ztqyC3kLto0e9WbNp0aeP+M3kTt+nbaIveGmUxAtZa+8iFgKLUOD4YKM5j+f3QD89bra7UeumolZHKuOXnTmeQ==, tarball: https://registry.npmjs.org/html-tags/-/html-tags-3.3.1.tgz}
     engines: {node: '>=8'}
+
+  html-to-md@0.8.6:
+    resolution: {integrity: sha512-KaRoYxML9AIETfgz5tgI1ioCsT8+skHTIILzrDV66XwCxuWUVjwCcpbnfeUwT9r8VBrfDAa8B5p5b5Pcs9LtRg==, tarball: https://registry.npmjs.org/html-to-md/-/html-to-md-0.8.6.tgz}
 
   http-assert@1.5.0:
     resolution: {integrity: sha512-uPpH7OKX4H25hBmU6G1jWNaqJGpTXxey+YOUizJUAgu0AjLUeC8D73hTrhvDS5D+GJN1DN1+hhc/eF/wpxtp0w==, tarball: https://registry.npmjs.org/http-assert/-/http-assert-1.5.0.tgz}
@@ -7379,6 +7385,8 @@ snapshots:
   hosted-git-info@2.8.9: {}
 
   html-tags@3.3.1: {}
+
+  html-to-md@0.8.6: {}
 
   http-assert@1.5.0:
     dependencies:

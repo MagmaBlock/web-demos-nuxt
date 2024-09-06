@@ -1,7 +1,9 @@
 <template>
-  <NMessageProvider>
-    <NaiveConfig>
-      <NuxtPage />
-    </NaiveConfig>
-  </NMessageProvider>
+  <NModalProvider>
+    <NMessageProvider>
+      <NaiveConfig>
+        <NuxtPage />
+      </NaiveConfig>
+    </NMessageProvider>
+  </NModalProvider>
 </template>
