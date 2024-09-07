@@ -7,6 +7,7 @@ const message = useMessage()
 const baseURL = useLocalStorage('ai-content-security-riabbs-baseURL', '')
 const apiKey = useLocalStorage('ai-content-security-riabbs-apiKey', '')
 const modelId = useLocalStorage('ai-content-security-riabbs-modelId', '')
+const temperature = useLocalStorage('ai-content-security-riabbs-temperature', 0.7)
 
 function handleSubmit() {
   try {
@@ -33,6 +34,9 @@ function handleSubmit() {
       <NFormItem label="OpenAI API Model" path="modelId">
         <NInput v-model:value="modelId" placeholder="请输入语言模型ID" type="text" autocomplete="off" />
       </NFormItem>
+      <NFormItem label="Temperature" path="temperature">
+        <NInputNumber v-model:value="temperature" :min="0" :max="2" :step="0.1" placeholder="请输入 temperature 值" />
+      </NFormItem>
       <NFlex justify="right">
         <NButton type="primary" @click="handleSubmit">
           保存设置
@@ -51,6 +55,7 @@ function handleSubmit() {
           点我
         </NButton>
       </NP>
+      <NP>temperature: 推荐 0.7</NP>
     </NAlert>
   </div>
 </template>

@@ -24,6 +24,7 @@ const concurrentRequests = ref(8)
 const baseURL = useLocalStorage('ai-content-security-riabbs-baseURL', '')
 const apiKey = useLocalStorage('ai-content-security-riabbs-apiKey', '')
 const modelId = useLocalStorage('ai-content-security-riabbs-modelId', '')
+const temperature = useLocalStorage('ai-content-security-riabbs-temperature', 0.7)
 
 const totalPromptTokens = useLocalStorage('ai-content-security-riabbs-totalPromptTokens', 0)
 const totalPromptCacheHitTokens = useLocalStorage('ai-content-security-riabbs-totalPromptCacheHitTokens', 0)
@@ -143,6 +144,7 @@ async function reviewContent(content: { content: string, reviewing?: boolean, sc
       baseURL: baseURL.value,
       apiKey: apiKey.value,
       modelId: modelId.value,
+      temperature: temperature.value,
       content: content.content
     })
     content.score = result.score
