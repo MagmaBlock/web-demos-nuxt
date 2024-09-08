@@ -41,5 +41,6 @@
     "toml",
     "gql",
     "graphql"
-  ]
+  ],
+  "Codegeex.CommitMessageStyle": "ConventionalCommits"
 }

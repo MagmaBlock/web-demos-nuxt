@@ -8,6 +8,7 @@ const baseURL = useLocalStorage('ai-content-security-riabbs-baseURL', '')
 const apiKey = useLocalStorage('ai-content-security-riabbs-apiKey', '')
 const modelId = useLocalStorage('ai-content-security-riabbs-modelId', '')
 const temperature = useLocalStorage('ai-content-security-riabbs-temperature', 0.7)
+const riabbsToken = useLocalStorage('ai-content-security-riabbs-token', '')
 
 function handleSubmit() {
   try {
@@ -36,6 +37,9 @@ function handleSubmit() {
       </NFormItem>
       <NFormItem label="Temperature" path="temperature">
         <NInputNumber v-model:value="temperature" :min="0" :max="2" :step="0.1" placeholder="请输入 temperature 值" />
+      </NFormItem>
+      <NFormItem label="RIABBS Token（可选）" path="riabbsToken">
+        <NInput v-model:value="riabbsToken" placeholder="请输入RIABBS Token" type="password" autocomplete="off" />
       </NFormItem>
       <NFlex justify="right">
         <NButton type="primary" @click="handleSubmit">

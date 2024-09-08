@@ -167,11 +167,19 @@ export const aiContentSecurityRouter = router({
      * @returns 主题内容、回复内容数组和总页数
      */
     getTopic: publicProcedure
-      .input(z.object({ topicId: z.number(), page: z.number().min(1).default(1) }))
-      .query(async ({ input: { topicId, page } }) => {
+      .input(z.object({
+        topicId: z.number(),
+        page: z.number().min(1).default(1),
+        token: z.string().optional()
+      }))
+      .query(async ({ input: { topicId, page, token } }) => {
         try {
           const url = `https://bbs.ria.red/api/topic/${topicId}?page=${page}`
-          const response = await axios.get<RiabbsTopicData>(url)
+          const headers: Record<string, string> = {}
+          if (token) {
+            headers.Authorization = `Bearer ${token}`
+          }
+          const response = await axios.get<RiabbsTopicData>(url, { headers })
           const topicData = response.data
 
           const result: string[] = []

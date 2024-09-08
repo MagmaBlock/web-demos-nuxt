@@ -61,12 +61,15 @@ watch(topicId, (newValue) => {
   router.push({ query: { ...route.query, topic: newValue.toString() } })
 })
 
+const riabbsToken = useLocalStorage('ai-content-security-riabbs-token', '')
+
 async function fetchTopic(): Promise<void> {
   loading.value = true
   try {
     const result = await $client.aiContentSecurity.riabbs.getTopic.query({
       topicId: topicId.value,
-      page: currentPage.value
+      page: currentPage.value,
+      token: riabbsToken.value || undefined
     })
     topicContent.value = { content: result.contents[0] }
     replies.value = result.contents.slice(1).map(content => ({ content }))
@@ -92,7 +95,8 @@ async function fetchReplies(): Promise<void> {
   try {
     const result = await $client.aiContentSecurity.riabbs.getTopic.query({
       topicId: topicId.value,
-      page: currentPage.value + 1
+      page: currentPage.value + 1,
+      token: riabbsToken.value || undefined
     })
     const newReplies = result.contents.map(content => ({ content }))
     replies.value.push(...newReplies)
