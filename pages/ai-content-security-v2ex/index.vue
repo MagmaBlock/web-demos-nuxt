@@ -145,7 +145,8 @@ async function reviewContent(content: { content: string, reviewing?: boolean, sc
       baseURL: baseURL.value,
       apiKey: apiKey.value,
       modelId: modelId.value,
-      content: content.content
+      content: content.content,
+      temperature: 1
     })
     content.score = result.score
     totalPromptTokens.value += result.usage.prompt_tokens
