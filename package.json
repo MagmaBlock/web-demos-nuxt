@@ -22,7 +22,7 @@
     "nuxt": "^3.13.2",
     "superjson": "^2.2.1",
     "trpc-nuxt": "^0.10.22",
-    "vue": "latest",
+    "vue": "^3.4.38",
     "zod": "^3.23.8"
   },
   "devDependencies": {
