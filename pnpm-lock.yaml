@@ -17,15 +17,6 @@ importers:
       '@vueuse/core':
         specifier: ^11.0.3
         version: 11.0.3(vue@3.5.2(typescript@5.5.4))
-      artplayer:
-        specifier: ^5.1.7
-        version: 5.1.7
-      artplayer-plugin-libass:
-        specifier: ^1.0.0
-        version: 1.0.0
-      assjs:
-        specifier: ^0.1.2
-        version: 0.1.2
       axios:
         specifier: ^1.7.7
         version: 1.7.7
@@ -1580,15 +1571,6 @@ packages:
   argparse@2.0.1:
     resolution: {integrity: sha512-8+9WqebbFzpX9OR+Wa6O29asIogeRMzcGtAINdpMHHyAg10f05aSFVBbcEqGf/PXw1EjAZ+q2/bEBg3DvurK3Q==, tarball: https://registry.npmjs.org/argparse/-/argparse-2.0.1.tgz}
 
-  artplayer-plugin-libass@1.0.0:
-    resolution: {integrity: sha512-ReQrZtmyhaVY2qmiLOI9K6B63SO9W/LzBPBwUIMniXSG4ztaFPy0l3yL5I/e6cBmSTYNqTowK2CSZ1NK1kxClg==, tarball: https://registry.npmjs.org/artplayer-plugin-libass/-/artplayer-plugin-libass-1.0.0.tgz}
-
-  artplayer@5.1.7:
-    resolution: {integrity: sha512-N/QdNlTwsIHUsWOHMPj0pq97v3qmgXZHfhy1q7I+8YN3/XakJiJJyVJgGaeBjU+y/fUIrzBhwpBaX+NFwK9/qw==, tarball: https://registry.npmjs.org/artplayer/-/artplayer-5.1.7.tgz}
-
-  assjs@0.1.2:
-    resolution: {integrity: sha512-tORoq76rjaL5E0CUmTuEOlxy9Cy5FJ/vZVsyTQI3Ih6fgP7559ZwJKY74V+Bh0+oPRfxywesw/8pKba80PN9NA==, tarball: https://registry.npmjs.org/assjs/-/assjs-0.1.2.tgz}
-
   ast-kit@1.1.0:
     resolution: {integrity: sha512-RlNqd4u6c/rJ5R+tN/ZTtyNrH8X0NHCvyt6gD8RHa3JjzxxHWoyaU0Ujk3Zjbh7IZqrYl1Sxm6XzZifmVxXxHQ==, tarball: https://registry.npmjs.org/ast-kit/-/ast-kit-1.1.0.tgz}
     engines: {node: '>=16.14.0'}
@@ -2923,10 +2905,6 @@ packages:
   keyv@4.5.4:
     resolution: {integrity: sha512-oxVHkHR/EJf2CNXnWxRLW6mg7JyCCUcG0DtEGmL2ctUo1PNTin1PUil+r/+4r5MpVgC/fn1kjsx7mjSujKqIpw==, tarball: https://registry.npmjs.org/keyv/-/keyv-4.5.4.tgz}
 
-  kind-of@6.0.3:
-    resolution: {integrity: sha512-dcS1ul+9tmeD95T+x28/ehLgd9mENa3LsvDTtzm3vyBEO7RPptvAD+t44WVXaUjTBRcrpFeFlC8WCruUR456hw==, tarball: https://registry.npmjs.org/kind-of/-/kind-of-6.0.3.tgz}
-    engines: {node: '>=0.10.0'}
-
   kleur@3.0.3:
     resolution: {integrity: sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w==, tarball: https://registry.npmjs.org/kleur/-/kleur-3.0.3.tgz}
     engines: {node: '>=6'}
@@ -2970,9 +2948,6 @@ packages:
   levn@0.4.1:
     resolution: {integrity: sha512-+bT2uH4E5LGE7h/n3evcS/sQlJXCpIp6ym8OWJ5eV6+67Dsql/LaaT7qJBAt2rzfoa/5QBGBhxDix1dMt2kQKQ==, tarball: https://registry.npmjs.org/levn/-/levn-0.4.1.tgz}
     engines: {node: '>= 0.8.0'}
-
-  libass-wasm@4.1.0:
-    resolution: {integrity: sha512-+RbYT/uuI6VHExCmGyUuMg3A2gQOaCRTzSn8GGDSf3q4cEoUNiINd9u4RGfZXA1UKafW+Hv8bmcKIX4FKbSh0Q==, tarball: https://registry.npmjs.org/libass-wasm/-/libass-wasm-4.1.0.tgz}
 
   lilconfig@2.1.0:
     resolution: {integrity: sha512-utWOt/GHzuUxnLKxB6dk81RoOeoNeHgbrXiuGk4yyF5qlRz+iIVWu56E2fqGHFrXz0QNUhLB/8nKqvRH66JKGQ==, tarball: https://registry.npmjs.org/lilconfig/-/lilconfig-2.1.0.tgz}
@@ -3336,9 +3311,6 @@ packages:
   openapi-typescript@6.7.6:
     resolution: {integrity: sha512-c/hfooPx+RBIOPM09GSxABOZhYPblDoyaGhqBkD/59vtpN21jEuWKDlM0KYTvqJVlSYjKs0tBcIdeXKChlSPtw==, tarball: https://registry.npmjs.org/openapi-typescript/-/openapi-typescript-6.7.6.tgz}
     hasBin: true
-
-  option-validator@2.0.6:
-    resolution: {integrity: sha512-tmZDan2LRIRQyhUGvkff68/O0R8UmF+Btmiiz0SmSw2ng3CfPZB9wJlIjHpe/MKUZqyIZkVIXCrwr1tIN+0Dzg==, tarball: https://registry.npmjs.org/option-validator/-/option-validator-2.0.6.tgz}
 
   optionator@0.9.4:
     resolution: {integrity: sha512-6IpQ7mKUxRcZNLIObR0hz7lxsapSSIYNZJwXPGeF0mTVqGKFIXj1DQcMoT22S3ROcLyY/rz0PWaWZ9ayWmad9g==, tarball: https://registry.npmjs.org/optionator/-/optionator-0.9.4.tgz}
@@ -6246,16 +6218,6 @@ snapshots:
 
   argparse@2.0.1: {}
 
-  artplayer-plugin-libass@1.0.0:
-    dependencies:
-      libass-wasm: 4.1.0
-
-  artplayer@5.1.7:
-    dependencies:
-      option-validator: 2.0.6
-
-  assjs@0.1.2: {}
-
   ast-kit@1.1.0:
     dependencies:
       '@babel/parser': 7.25.6
@@ -7671,8 +7633,6 @@ snapshots:
     dependencies:
       json-buffer: 3.0.1
 
-  kind-of@6.0.3: {}
-
   kleur@3.0.3: {}
 
   klona@2.0.6: {}
@@ -7744,8 +7704,6 @@ snapshots:
     dependencies:
       prelude-ls: 1.2.1
       type-check: 0.4.0
-
-  libass-wasm@4.1.0: {}
 
   lilconfig@2.1.0: {}
 
@@ -8288,10 +8246,6 @@ snapshots:
       supports-color: 9.4.0
       undici: 5.28.4
       yargs-parser: 21.1.1
-
-  option-validator@2.0.6:
-    dependencies:
-      kind-of: 6.0.3
 
   optionator@0.9.4:
     dependencies:
