@@ -16,23 +16,23 @@
   "dependencies": {
     "@trpc/client": "^10.45.2",
     "@trpc/server": "^10.45.2",
-    "@vueuse/core": "^11.0.3",
+    "@vueuse/core": "^11.1.0",
     "axios": "^1.7.7",
     "html-to-md": "^0.8.6",
-    "nuxt": "^3.12.4",
+    "nuxt": "^3.13.2",
     "superjson": "^2.2.1",
-    "trpc-nuxt": "^0.10.21",
+    "trpc-nuxt": "^0.10.22",
     "vue": "latest",
-    "zod": "^3.22.4"
+    "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^2.26.0",
+    "@antfu/eslint-config": "^2.27.3",
     "@bg-dev/nuxt-naiveui": "1.0.0-edge.2",
-    "@nuxtjs/tailwindcss": "^6.11.4",
-    "@types/node": "^20.11.30",
-    "eslint": "^8.57.0",
+    "@nuxtjs/tailwindcss": "^6.12.2",
+    "@types/node": "^20.17.3",
+    "eslint": "^9.13.0",
     "oxlint": "^0.7.2",
-    "typescript": "^5.4.3",
-    "vue-tsc": "^2.0.7"
+    "typescript": "^5.6.3",
+    "vue-tsc": "^2.1.8"
   }
 }
