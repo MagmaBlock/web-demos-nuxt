@@ -90,6 +90,10 @@ const totalCost = computed(() => {
   <div class="max-w-2xl mx-auto py-8">
     <NCard title="RIA 搬迁费用计算器">
       <NFlex vertical>
+        <NAlert :show-icon="false">
+          提示：实际搬迁业务可能并不是简单地计算总区域的体积，而是排去了空气方块的最终格数。因此本界面计算出的结果会偏大。
+        </NAlert>
+
         <NForm ref="formRef" :model="calculatorForm" :rules="rules" label-placement="top" label-width="100">
           <!-- 计算方式选择 -->
           <NFormItem label="计算方式">
@@ -117,9 +121,6 @@ const totalCost = computed(() => {
 
           <!-- 坐标输入 -->
           <template v-else>
-            <NAlert>
-              提示：实际搬迁业务可能并不是简单地计算总区域的体积，
-            </NAlert>
             <NGrid :cols="3" :x-gap="32">
               <NGridItem>
                 <NFormItem label="X1" path="coordinates.x1">
